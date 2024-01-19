@@ -1,0 +1,191 @@
+HADOOP_HOME
+E:\hadoop-3.3.0\
+
+JAVA_HOME
+C:\Program Files\Java\jdk1.8.0_202
+
+E:\hadoop-3.3.0\bin
+E:\hadoop-3.3.0\sbin
+C:\Program Files\Java\jdk1.8.0_202\bin
+
+hdfs namenode -format
+
+start-all.cmd /   start-dfs.cmd , start-yarn.cmd 
+
+hdfs -version 						//version
+hdfs dfs -ls /demo 					//name of the folder
+hdfs dfs -copyFromLocal /D:/data/data1.txt /demo 	//local to hadoop
+hdfs dfs -get /demo/myfile.txt /D:/data 		//hadoop to local
+hdfs dfs -copyToLocal /demo/myfile.txt /D:/data 	//hadoop to local
+hdfs dfs -cat /demo/myfile.txt 			        //content of the file gets displayed
+hdfs dfs -du /demo 					//disk usage
+hdfs dfs -rm -r /demo 					//delete
+hdfs dfs -mkdir /demo/abc.txt 				//make a file
+
+
+*/MapReduce/*
+hdfs namenode -format
+start-all.cmd
+hdfs dfsadmin -safemode leave
+hdfs dfs -mkdir /input
+
+create data.txt
+abc
+xyz
+XYz
+kkl
+
+hdfs dfs -put "data.txt" /input/
+
+hdfs dfs -ls /input
+
+hdfs dfs -cat /input/data.txt
+
+hadoop jar "E:\hadoop-3.3.0\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.0.jar" wordcount /input /output
+
+hdfs dfs -cat /output/part-r-00000 
+
+*/MongoDB/*
+db.empdetails.insertOne({"id":"103","fname":"xyz"}) //insert
+db.empdetails.find() //display all
+db.empdetails.insertMany([{"id":"103","fname":"abc"},{"id":"104","fname":"pqr"}])
+db.empdetails.find({fname:"xyz"})
+db.empdetails.drop()
+db.empdetails.updateOne({fname: "xyz"}, {$set:{id:1000}})
+
+*/hive/* 
+
+https://demo.gethue.com/hue/editor?editor=845644
+username:demo
+password:demo
+
+>create database user_db;
+>show databases;
+>create table user_db.student (id int, name String, mobile String, address String);
+>drop table user_db.student;
+>create table user_db.student (id int, name String, mobile String, address String)
+tblproperties ( 'creator'='asn', 'created_at'='30-10-2023');
+>describe user_db.student;
+
+Load data in path D:\student_data.txt into table user_db.student;
+
+insert into user_db.student values(501,'ppp qqq rrr','1234567890','pqrs');
+insert into user_db.student values(502,'abc qqq rrr','1234567890','abcrs');
+insert into user_db.student values(503,'lmn qqq rrr','1234567890','lmns');
+insert into user_db.student values(504,'xyz qqq rrr','1234567890','xyzs');
+insert into user_db.student values(505,'tuv qqq rrr','1234567890','tuvs');
+or
+insert into user_db.student values(503,'lmn qqq rrr','1234567890','lmns'), (504,'xyz qqq
+rrr','1234567890','xyzs') , (505,'tuv qqq rrr','1234567890','tuvs');
+select * from student;
+
+1. Creating a view
+CREATE VIEW stud_503 AS SELECT * FROM student WHERE id >503;
+2. Viewing a view
+select * from stud_503;
+3. Dropping a view
+drop view stud_503;
+
+*/PIG/*
+
+PIG_HOME
+D:\pig-0.17.0\pig-0.17.0
+
+D:\pig-0.17.0\pig-0.17.0\bin
+
+ Find the line in pig.cmd in \bin folder :
+set HADOOP_BIN_PATH=%HADOOP_HOME%\bin
+Replace this line by:
+set HADOOP_BIN_PATH=%HADOOP_HOME%\libexec
+
+Create a file data_for_pig.txt with following data:
+001,ABC,PQRS,9422980768,Delhi
+002,LMN,LMNO,9422980745,Mumbai
+003,XYZ,XYZA,9422980754,Chennai
+004,DEF,DEFG,9422980744,Delhi
+005,GHI,GHIJ,9422980719,Pune
+
+hdfs dfs -mkdir /pig
+hdfs dfs -put "E:\pig-0.17.0\data_for_pig.txt" /pig  
+hdfs dfs -cat hdfs://localhost:9000/pig1/data_for_pig.txt
+pig -x local
+
+
+grunt > student = LOAD 'hdfs://localhost:9000/pig/data_for_pig.txt' USING PigStorage(',') as
+(id:int,fname:chararray,lname:chararray,phone:chararray,city:chararray);
+
+dump student;
+
+city = LOAD 'hdfs://localhost:9000/pig/data_for_pig_new.txt' USING PigStorage(',') as
+(city:chararray, population:chararray);
+
+for_each_stud1 = foreach student generate id, fname, city;
+
+dump for_each_stud1;
+
+
+filter_command = filter student by id>004;
+dump filter_command;
+
+join_command = join student by city, city by city;
+dump join_command;
+
+order_command_asc = order student by city asc;
+dump order_command_asc;
+
+order_command_desc = order student by city desc;
+dump order_command_desc;
+
+
+store order_command_desc into '/desc';
+
+
+
+
+
+
+*/SPARK/*
+
+
+SPARK_HOME
+D:\spark-3.1.2-bin-hadoop3.2
+
+JAVA_HOME
+C:\Program Files\Java\jdk1.8.0_202
+
+Set PATH in Environment variable       
+D:\spark-3.1.2-bin-hadoop3.2\bin
+D:\spark-3.1.2-bin-hadoop3.2\sbin
+
+Run CMD as administrator.
+1.hdfs namenode -format
+2.  cd E:\hadoop-3.2.2\sbin
+3. start-all.cmd
+4.  cd D:\spark-3.1.2-bin-hadoop3.2\sbin
+5.  spark-shell
+:quit
+hdfs dfs -mkdir /spark
+
+Create data.txt file on pc
+Deer	Beer	River
+Car	Car 	River
+Deer	Car	Beer
+
+hdfs dfs -put E:\spark-3.1.2-bin-hadoop3.2\data.txt /spark
+Start spark-shell
+
+Let's create an RDD by using the following command.
+scala>  val data=sc.textFile("data.txt")
+
+Splitting data:
+scala> val splitdata = data.flatMap(line => line.split(" "));
+scala> splitdata.collect;
+
+Now, we are going to map data or keys with value 1
+>val mapdata = splitdata.map(word => (word,1));
+>mapdata.collect;
+
+Now, we are going to reduce data.
+>val reducedata = mapdata.reduceByKey(_+_);
+>reducedata.collect;
+
