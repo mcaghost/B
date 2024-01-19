@@ -181,7 +181,7 @@ public class Union {
 
 
 */MongoDB/*
-
+db.createCollection("empdetails") //create collection
 db.empdetails.insertOne({"id":"103","fname":"xyz"}) //insert
 db.empdetails.find() //display all
 db.empdetails.insertMany([{"id":"103","fname":"abc"},{"id":"104","fname":"pqr"}])
@@ -328,4 +328,8 @@ Now, we are going to reduce data.
 >reducedata.collect;
 
 
+
+
+
+hdfs dfs -cat /output/part-r-0000
 
