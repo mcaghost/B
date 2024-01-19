@@ -329,7 +329,3 @@ Now, we are going to reduce data.
 
 
 
-
-
-hdfs dfs -cat /output/part-r-0000
-
